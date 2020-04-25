@@ -13,5 +13,6 @@ Sonoff Pow blue Led is lighted when a cycle is running and turned off at the cyc
 
 ## ESPHome firmware notes
 
+Use this yaml code to create your ESPHome firmware: [sonoff_pow_r2_w_machine.yaml]https://github.com/Gio-dot/Washing-Machine-Sonoff-Pow-R2-Esphome/blob/master/sonoff_pow_r2_w_machine.yaml)
 Line 5: `esp8266_restore_from_flash: true` to restore relay state after a Sonoff POW R2 power cycle.
 Lines 48-167: washing phases; phases detection can be optimized changing power thresholds and delay filters. 
