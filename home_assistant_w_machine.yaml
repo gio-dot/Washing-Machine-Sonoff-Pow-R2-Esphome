@@ -1,0 +1,30 @@
+utility_meter:
+
+##############################################################
+## Year kWh Sonoff Pow r2 Washing M. ##
+##############################################################  
+
+  sonoff_pow_r2_year_energy:  # sensore diretto dal pow r2 esphome
+    source: sensor.sonoff_pow_r2_total_daily_energy
+    cycle: yearly
+    tariffs:
+      - peak            
+
+automation:
+  - alias: washing machine ending
+    trigger:
+      - platform: state 
+        entity_id: binary_sensor.washing_machine_running
+        to: 'off'  
+    action:
+      - service: media_player.volume_set
+        data_template:
+          entity_id: media_player.googlehome
+          volume_level: 0.6
+      - service: tts.google_translate_say
+        entity_id: media_player.googlehome7895
+        data_template:
+          message: >
+            Washing Cycle end
+          language: 'it'
+          cache: false
