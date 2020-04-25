@@ -19,4 +19,6 @@ Line 5: `esp8266_restore_from_flash: true` to restore previous relay state after
 
 Lines 48-167: washing phases; phases detection can be optimized changing power thresholds and delay filters. 
 
-ESPHome `total_daily_energy` isn't retained through Sonoff power cycles. For this reason and also to store washing machine consumptin hystorical data i used an utility meter in Home assistant Configuration feeding it with `total_daily_energy` sensor from Sonoff POW.
+ESPHome `total_daily_energy` isn't retained through Sonoff power cycles. For this reason and also to store washing machine consumption hystorical data, i used an utility meter in Home assistant Configuration feeding it with `total_daily_energy` sensor from Sonoff POW.
+
+
