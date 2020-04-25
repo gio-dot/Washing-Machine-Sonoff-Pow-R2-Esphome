@@ -18,3 +18,5 @@ Use this yaml code to create your ESPHome firmware: [sonoff_pow_r2_w_machine.yam
 Line 5: `esp8266_restore_from_flash: true` to restore previous relay state after a Sonoff POW R2 power cycle.
 
 Lines 48-167: washing phases; phases detection can be optimized changing power thresholds and delay filters. 
+
+ESPHome `total_daily_energy` isn't retained through Sonoff power cycles. For this reason and also to store washing machine consumptin hystorical data i used an utility meter in Home assistant Configuration feeding it with `total_daily_energy` sensor from Sonoff POW.
