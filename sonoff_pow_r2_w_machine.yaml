@@ -1,0 +1,225 @@
+esphome:
+  name: sonoff_pow_r2_lavatrice
+  platform: ESP8266
+  board: esp01_1m
+  esp8266_restore_from_flash: true
+        
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pw
+
+# Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Sonoff Pow R2 Lavatrice"
+    password: "BaOG47iOIGPC"
+
+captive_portal:
+
+# Enable logging
+logger:
+  baud_rate: 0
+
+uart:
+  rx_pin: RX
+  baud_rate: 4800
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+time:
+  - platform: sntp
+    id: my_time
+
+################################################################################
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "Sonoff POW Button"
+    internal: true
+    on_press:
+      - switch.toggle: relay
+
+################################################################################
+#                               Machine running                                #
+################################################################################
+  - platform: template
+    name: "RUN"
+    id: machine_running
+    filters:
+      - delayed_on: 25s # MINIMUM TIME TO AVOID FALSE POSITIVES
+      - delayed_off: 120s
+    lambda: |-
+      if (isnan(id(power).state)) {
+        return {};
+      } else if (id(power).state > 4) {
+        // Running
+        return true;
+      } else {
+        // Not running
+        return false;
+      }
+    on_press:
+      then: # at cycle start i reset all binary sensors
+        - lambda: |-  
+            {
+              id(machine_end).publish_state(false);
+              id(minimum_working_time).publish_state(false);
+              id(cycle_centrifughe).publish_state(false);
+              id(cycle_drain).publish_state(false);
+              id(cycle_washing).publish_state(false);
+            }
+        - light.turn_on: led
+    on_release:
+      then: # at the end of cycle turn on end cycle
+        - lambda: |-  
+            {
+              id(machine_end).publish_state(true);
+            }        
+################################################################################
+#                           Minimum duration cycle                             #
+################################################################################
+  - platform: template
+    name: "Washing Machine Minimum time"
+    internal: true # minimum working time 30m
+    id: minimum_working_time 
+    filters:
+      - delayed_on: 30min
+    lambda: |-
+      if (isnan(id(power).state)) {
+        return {};
+      } else if (id(power).state > 4) {
+        // Running
+        return true;
+      } else {
+        // Not running (le due graffe significa che non fa nulla)
+        return {};
+      }
+################################################################################
+#                                Washing                                      #
+################################################################################
+  - platform: template
+    name: "WASHING"
+    id: cycle_washing
+    filters:
+      - delayed_on: 3s
+    # > 50W for 3s (washing cycle)  
+    lambda: |-  
+      if (isnan(id(power).state)) {
+        return {};
+      } else if (id(power).state > 40) {
+        // Running
+        return true;
+      } else {
+        // Not running (le due graffe significa che non fa nulla)
+        return {};
+      } 
+################################################################################
+#                                Centrifuge                                    #
+################################################################################
+  - platform: template
+    name: "CENTRIFUGE"
+    id: cycle_centrifughe
+    filters:
+      - delayed_on: 60s
+    # >< 90W-400W for 60s (centrifuge)  
+    lambda: |-  
+      if (isnan(id(power).state)) {
+        return {};
+      } else if ( (id(power).state > 90)&&(id(power).state < 400) ){
+        // Running
+        return true;
+      } else {
+        // Not running (le due graffe significa che non fa nulla)
+        return {};
+      }
+################################################################################
+#                                Water drain                                   #
+################################################################################
+  - platform: template
+    name: "DRAIN"
+    id: cycle_drain
+    filters:
+      - delayed_on: 60s
+    # >< 15W-50W for 60s (drain pump)  
+    lambda: |-  
+      if (isnan(id(power).state)) {
+        return {};
+      } else if ( (id(power).state > 15) && (id(power).state < 60) && (id(cycle_centrifughe).state) ){
+        // Running
+        return true;
+      } else {
+        // Not running (le due graffe significa che non fa nulla)
+        return {};
+      }                             
+################################################################################
+#                                 Machine end                                  #
+################################################################################
+  - platform: template
+    name: "END"
+    id: machine_end
+    on_press:
+      - light.turn_off: led     
+      
+################################################################################
+
+switch:
+  - platform: gpio
+    id: relay
+    pin: GPIO12
+    name: "Sonoff POW Relay"
+
+output:
+  - platform: esp8266_pwm
+    id: pow_blue_led
+    pin:
+      number: GPIO13
+      inverted: True
+
+light:
+  - platform: monochromatic
+    name: "Sonoff POW Blue LED"
+    internal: true
+    output: pow_blue_led
+    id: led
+
+sensor:
+  - platform: wifi_signal
+    name: "Sonoff POW WiFi Signal"
+    update_interval: 60s
+  - platform: uptime
+    name: "Sonoff POW Uptime"
+  - platform: cse7766
+    update_interval: 5s
+    current:
+      name: "Sonoff POW Current"
+    voltage:
+      name: "Sonoff POW Voltage"
+    power:
+      name: "Sonoff POW Power"
+      id: power
+      # on_value_range:
+      #   - above: 4.0
+      #     then:
+      #       - light.turn_on: led
+      #   - below: 3.0
+      #     then:
+      #       - delay: 60s
+      #       - light.turn_off: led
+  - platform: total_daily_energy ############################
+    name: "Sonoff POW R2 Total Daily Energy"
+    power_id: power 
+    filters:
+        # Multiplication factor from W to kW is 0.001
+      - multiply: 0.001
+    unit_of_measurement: kWh
+    accuracy_decimals: 1      ###############################
+
+text_sensor:
+  - platform: version
+    name: "Sonoff POW ESPHome Version"
