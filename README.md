@@ -1,0 +1,1 @@
+# Washing-Machine-Sonoff-Pow-R2-Esphome
