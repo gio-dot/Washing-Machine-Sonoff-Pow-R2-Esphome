@@ -5,6 +5,7 @@ Changelog:
 3. Optimized washing phases detection.
 
 Use this yaml code to create your ESPHome firmware v.1.1: [sonoff_pow_r2_w_machine.yaml](https://github.com/Gio-dot/Washing-Machine-Sonoff-Pow-R2-Esphome/blob/master/sonoff_pow_r2_lavatrice_v1.1.yaml)
+
 Old version: [sonoff_pow_r2_w_machine.yaml](https://github.com/Gio-dot/Washing-Machine-Sonoff-Pow-R2-Esphome/blob/master/sonoff_pow_r2_w_machine.yaml)
 
 # Washing-Machine-Sonoff-Pow-R2-Esphome
