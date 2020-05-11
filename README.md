@@ -1,4 +1,4 @@
-New Esphome code v.1.1
+##New Esphome code v.1.1
 Changelog:
 1. Disabled esp8266_restore_from_flash option.
 2. Created a second set of sensors (with slow update rate to use in Home assistant).
