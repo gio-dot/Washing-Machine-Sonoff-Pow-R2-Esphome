@@ -1,3 +1,9 @@
+New Esphome code v.1.1
+Changelog:
+1. Disabled esp8266_restore_from_flash option.
+2. Created a second set of sensors (with slow update rate to use in Home assistant).
+3. Optimized washing phases detection.
+
 # Washing-Machine-Sonoff-Pow-R2-Esphome
 
 I use a Sonoff Pow R2 to monitor my washing machine activity in Home assistant; traditional approach to do so is to decode washing phases using Home assistant sensors/templates. Thanks to ESPHome firmware this can be easily made directly in the Sonoff Pow R2 cleaning up Home assistant configuration.
