@@ -4,6 +4,9 @@ Changelog:
 2. Created a second set of sensors (with slow update rate to use in Home assistant).
 3. Optimized washing phases detection.
 
+Use this yaml code to create your ESPHome firmware v.1.1: [sonoff_pow_r2_w_machine.yaml](https://github.com/Gio-dot/Washing-Machine-Sonoff-Pow-R2-Esphome/blob/master/sonoff_pow_r2_lavatrice_v1.1.yaml)
+Old version: [sonoff_pow_r2_w_machine.yaml](https://github.com/Gio-dot/Washing-Machine-Sonoff-Pow-R2-Esphome/blob/master/sonoff_pow_r2_w_machine.yaml)
+
 # Washing-Machine-Sonoff-Pow-R2-Esphome
 
 I use a Sonoff Pow R2 to monitor my washing machine activity in Home assistant; traditional approach to do so is to decode washing phases using Home assistant sensors/templates. Thanks to ESPHome firmware this can be easily made directly in the Sonoff Pow R2 cleaning up Home assistant configuration.
@@ -20,8 +23,6 @@ This image show Home assitant card from Sonoff Pow. Washing phases are shown in 
 Sonoff Pow blue Led is lighted when a cycle is running and turned off at the cycle end.
 
 ## ESPHome firmware notes
-
-Use this yaml code to create your ESPHome firmware: [sonoff_pow_r2_w_machine.yaml](https://github.com/Gio-dot/Washing-Machine-Sonoff-Pow-R2-Esphome/blob/master/sonoff_pow_r2_w_machine.yaml)
 
 Line 5: `esp8266_restore_from_flash: true` to restore previous relay state after a Sonoff POW R2 power cycle.
 
