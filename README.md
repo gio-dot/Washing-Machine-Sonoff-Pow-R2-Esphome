@@ -7,7 +7,7 @@ RUN or END sensors can be easily used in Home assistant automations to send mess
 
 For instructions about ESPHome installation see: https://esphome.io/index.html
 
-### New Esphome code 10/06/2020
+### New Esphome and Home assistant code 10/06/2020
 Changelog:
 1. Optimized washing phases detection.
 2. Removed "washing" phase.
