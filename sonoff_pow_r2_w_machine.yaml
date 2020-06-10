@@ -2,7 +2,7 @@ esphome:
   name: sonoff_pow_r2_lavatrice
   platform: ESP8266
   board: esp01_1m
-  esp8266_restore_from_flash: true
+  # esp8266_restore_from_flash: true
         
 wifi:
   ssid: !secret wifi_ssid
@@ -52,8 +52,8 @@ binary_sensor:
     name: "RUN"
     id: machine_running
     filters:
-      - delayed_on: 25s # MINIMUM TIME TO AVOID FALSE POSITIVES
-      - delayed_off: 120s
+      - delayed_on: 60s # MINIMUM TIME TO AVOID FALSE POSITIVES
+      - delayed_off: 300s
     lambda: |-
       if (isnan(id(power).state)) {
         return {};
@@ -72,7 +72,6 @@ binary_sensor:
               id(minimum_working_time).publish_state(false);
               id(cycle_centrifughe).publish_state(false);
               id(cycle_drain).publish_state(false);
-              id(cycle_washing).publish_state(false);
             }
         - light.turn_on: led
     on_release:
@@ -90,6 +89,7 @@ binary_sensor:
     id: minimum_working_time 
     filters:
       - delayed_on: 30min
+      - delayed_off: 180s
     lambda: |-
       if (isnan(id(power).state)) {
         return {};
@@ -100,25 +100,7 @@ binary_sensor:
         // Not running (le due graffe significa che non fa nulla)
         return {};
       }
-################################################################################
-#                                Washing                                      #
-################################################################################
-  - platform: template
-    name: "WASHING"
-    id: cycle_washing
-    filters:
-      - delayed_on: 3s
-    # > 50W for 3s (washing cycle)  
-    lambda: |-  
-      if (isnan(id(power).state)) {
-        return {};
-      } else if (id(power).state > 40) {
-        // Running
-        return true;
-      } else {
-        // Not running (le due graffe significa che non fa nulla)
-        return {};
-      } 
+
 ################################################################################
 #                                Centrifuge                                    #
 ################################################################################
@@ -127,11 +109,11 @@ binary_sensor:
     id: cycle_centrifughe
     filters:
       - delayed_on: 60s
-    # >< 90W-400W for 60s (centrifuge)  
+    # >< 90W-400W for 60s (centrifuge)  010520 changed threshold to 100W
     lambda: |-  
       if (isnan(id(power).state)) {
         return {};
-      } else if ( (id(power).state > 90)&&(id(power).state < 400) ){
+      } else if ( (id(power).state > 100)&&(id(power).state < 400)&&(id(minimum_working_time).state) ){
         // Running
         return true;
       } else {
@@ -173,6 +155,7 @@ switch:
     id: relay
     pin: GPIO12
     name: "Sonoff POW Relay"
+    restore_mode: ALWAYS_ON
 
 output:
   - platform: esp8266_pwm
@@ -195,14 +178,19 @@ sensor:
   - platform: uptime
     name: "Sonoff POW Uptime"
   - platform: cse7766
-    update_interval: 5s
+    update_interval: 2s
     current:
       name: "Sonoff POW Current"
+      id: curr
+      internal: true
     voltage:
       name: "Sonoff POW Voltage"
+      id: volt
+      internal: true
     power:
       name: "Sonoff POW Power"
       id: power
+      internal: true
       # on_value_range:
       #   - above: 4.0
       #     then:
@@ -218,8 +206,48 @@ sensor:
         # Multiplication factor from W to kW is 0.001
       - multiply: 0.001
     unit_of_measurement: kWh
-    accuracy_decimals: 1      ###############################
+    accuracy_decimals: 1      
 
+################################################################################
+#                         Slow sensors for Home assistant                      #
+################################################################################
+
+  - platform: template #########################
+    name: "Sonoff Pow Current Slow"
+    lambda: |-
+      if (id(curr).state) {
+        return (id(curr).state);
+      } else {
+        return 0;
+      }
+    unit_of_measurement: A
+    icon: "mdi:alpha-a-circle"
+    update_interval: 90s
+  
+  - platform: template #########################
+    name: "Sonoff Pow Voltage Slow"
+    lambda: |-
+      if (id(volt).state) {
+        return (id(volt).state);
+      } else {
+        return 0;
+      }
+    unit_of_measurement: V
+    icon: "mdi:alpha-v-circle"
+    update_interval: 90s
+  
+  - platform: template #########################
+    name: "Sonoff Pow Power Slow"
+    lambda: |-
+      if (id(power).state) {
+        return (id(power).state);
+      } else {
+        return 0;
+      }
+    unit_of_measurement: W 
+    icon: "mdi:alpha-w-circle"
+    update_interval: 90s
+  
 text_sensor:
   - platform: version
     name: "Sonoff POW ESPHome Version"
