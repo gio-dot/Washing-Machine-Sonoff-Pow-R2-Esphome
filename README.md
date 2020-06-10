@@ -7,15 +7,13 @@ RUN or END sensors can be easily used in Home assistant automations to send mess
 
 For instructions about ESPHome installation see: https://esphome.io/index.html
 
-### New Esphome code v.1.1
+### New Esphome code 10/06/2020
 Changelog:
-1. Disabled esp8266_restore_from_flash option.
-2. Created a second set of sensors (with slow update rate to use in Home assistant).
-3. Optimized washing phases detection.
+1. Optimized washing phases detection.
+2. Removed "washing" phase.
+3. Optimized Home assistant yaml.
 
-Use this yaml code to create your ESPHome firmware v.1.1: [sonoff_pow_r2_w_machine.yaml](https://github.com/Gio-dot/Washing-Machine-Sonoff-Pow-R2-Esphome/blob/master/sonoff_pow_r2_lavatrice_v1.1.yaml)
-
-Old version: [sonoff_pow_r2_w_machine.yaml](https://github.com/Gio-dot/Washing-Machine-Sonoff-Pow-R2-Esphome/blob/master/sonoff_pow_r2_w_machine.yaml)
+Use this yaml code to create your ESPHome firmware [sonoff_pow_r2_w_machine.yaml](https://github.com/Gio-dot/Washing-Machine-Sonoff-Pow-R2-Esphome/blob/master/sonoff_pow_r2_w_machine.yaml)
 
 ## How it works
 
