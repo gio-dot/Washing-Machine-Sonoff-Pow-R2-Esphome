@@ -1,17 +1,14 @@
-entities:
-  - entity: sensor.sonoff_pow_voltage
-  - entity: sensor.sonoff_pow_current
-  - entity: sensor.sonoff_pow_power
-  - entity: sensor.sonoff_pow_r2_total_daily_energy
-    name: Sonoff POW Daily Energy
-  - entity: sensor.sonoff_pow_r2_year_energy_peak
-    name: Sonoff POW Year Energy
-  - entity: switch.sonoff_pow_relay
-  - entity: binary_sensor.end
-  - entity: binary_sensor.drain
-  - entity: binary_sensor.centrifuge
-  - entity: binary_sensor.washing
-  - entity: binary_sensor.run
-show_header_toggle: false
-title: Washing machine
-type: entities
+      - type: entities
+        entities:
+          - entity: sensor.current_run_elapsed_time
+          - entity: binary_sensor.washing_machine_run
+          - entity: binary_sensor.washing_machine_centrifuge
+          - entity: binary_sensor.washing_machine_drain
+          - entity: binary_sensor.washing_machine_end
+          - entity: sensor.washing_machine_current_slow
+          - entity: sensor.washing_machine_voltage_slow
+          - entity: sensor.washing_machine_power_slow
+          - entity: sensor.washing_machine_total_daily_energy
+          - entity: binary_sensor.washing_machine_button
+          - entity: sensor.last_run_details
+        title: pow-origin-16a
